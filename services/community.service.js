@@ -19,7 +19,9 @@ const joinCommunity = async (code, userId) => {
     throw new Error("Community not found");
   }
 
-  const alreadyJoined = community.members.includes(userId);
+  const alreadyJoined = community.members.some(
+    (m) => m.toString() === userId.toString()
+  );
 
   if (!alreadyJoined) {
     community.members.push(userId);
