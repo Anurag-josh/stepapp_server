@@ -20,8 +20,29 @@ exports.updateSteps = async (req, res) => {
       });
     }
 
-    // ✅ ONLY UPDATE IF NEW STEPS ARE HIGHER
-    if (steps > user.steps) {
+    // ✅ TODAY DATE
+    const today =
+      new Date()
+        .toISOString()
+        .split("T")[0];
+
+    // ✅ LAST ACTIVE DATE
+    const lastDate =
+      user.lastActive
+        ? new Date(user.lastActive)
+            .toISOString()
+            .split("T")[0]
+        : null;
+
+    // ✅ ALLOW:
+    // 1. Higher steps
+    // OR
+    // 2. New day reset
+    const shouldUpdate =
+      steps > user.steps ||
+      today !== lastDate;
+
+    if (shouldUpdate) {
 
       user.steps = steps;
 
