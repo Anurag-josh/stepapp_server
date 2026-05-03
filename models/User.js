@@ -18,9 +18,16 @@ const userSchema = new mongoose.Schema(
       required: true,
     },
 
+    // ✅ USER STEPS
     steps: {
       type: Number,
       default: 0,
+    },
+
+    // ✅ COMMUNITY ROOM CODE
+    communityCode: {
+      type: String,
+      default: "",
     },
 
     // ✅ LAST ACTIVE TIME

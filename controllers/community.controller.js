@@ -1,3 +1,4 @@
+const User = require("../models/User");
 const Community = require("../models/Community");
 
 const {
@@ -9,15 +10,29 @@ const {
 // ✅ CREATE COMMUNITY
 const create = async (req, res) => {
   try {
-    const community = await createCommunity(
-      req.user.id
-    );
+
+    const community =
+      await createCommunity(
+        req.user.id
+      );
+
+    // ✅ FETCH USER DOC
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    // ✅ SAVE COMMUNITY CODE
+    user.communityCode = community.code;
+    await user.save();
 
     res.status(201).json({
       success: true,
       community,
     });
+
   } catch (err) {
+
     res.status(400).json({
       success: false,
       message: err.message,
@@ -28,18 +43,32 @@ const create = async (req, res) => {
 // ✅ JOIN COMMUNITY
 const join = async (req, res) => {
   try {
+
     const { code } = req.body;
 
-    const community = await joinCommunity(
-      code,
-      req.user.id
-    );
+    const community =
+      await joinCommunity(
+        code,
+        req.user.id
+      );
+
+    // ✅ FETCH USER DOC
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    // ✅ SAVE COMMUNITY CODE
+    user.communityCode = code;
+    await user.save();
 
     res.status(200).json({
       success: true,
       community,
     });
+
   } catch (err) {
+
     res.status(400).json({
       success: false,
       message: err.message,
@@ -50,15 +79,19 @@ const join = async (req, res) => {
 // ✅ GET COMMUNITY
 const getOne = async (req, res) => {
   try {
-    const community = await getCommunity(
-      req.params.code
-    );
+
+    const community =
+      await getCommunity(
+        req.params.code
+      );
 
     res.status(200).json({
       success: true,
       community,
     });
+
   } catch (err) {
+
     res.status(400).json({
       success: false,
       message: err.message,
@@ -82,6 +115,7 @@ const leaveCommunity = async (
       });
 
     if (!community) {
+
       return res.status(404).json({
         success: false,
         message: "Community not found",
@@ -96,6 +130,13 @@ const leaveCommunity = async (
       );
 
     await community.save();
+
+    // ✅ CLEAR COMMUNITY CODE
+    const user = await User.findById(req.user.id);
+    if (user) {
+      user.communityCode = "";
+      await user.save();
+    }
 
     res.json({
       success: true,
