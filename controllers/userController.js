@@ -22,16 +22,12 @@ exports.updateSteps = async (req, res) => {
 
     // ✅ TODAY DATE
     const today =
-      new Date()
-        .toISOString()
-        .split("T")[0];
+      new Date().toLocaleDateString("en-CA");
 
     // ✅ LAST ACTIVE DATE
     const lastDate =
       user.lastActive
-        ? new Date(user.lastActive)
-            .toISOString()
-            .split("T")[0]
+        ? new Date(user.lastActive).toLocaleDateString("en-CA")
         : null;
 
     // ✅ ALLOW:
